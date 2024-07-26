@@ -1,0 +1,5 @@
+/Users/absjames/Cwk/yr13/teacher_aid_graph_theory/obj/Debug/net8.0/teacher_aid_graph_theory.GeneratedMSBuildEditorConfig.editorconfig
+/Users/absjames/Cwk/yr13/teacher_aid_graph_theory/obj/Debug/net8.0/teacher_aid_graph_theory.AssemblyInfoInputs.cache
+/Users/absjames/Cwk/yr13/teacher_aid_graph_theory/obj/Debug/net8.0/teacher_aid_graph_theory.AssemblyInfo.vb
+/Users/absjames/Cwk/yr13/teacher_aid_graph_theory/obj/Debug/net8.0/teacher_aid_graph_theory.vbproj.CoreCompileInputs.cache
+/Users/absjames/Cwk/yr13/teacher_aid_graph_theory/obj/Debug/net8.0/teacher_aid_graph_theory.sourcelink.json
