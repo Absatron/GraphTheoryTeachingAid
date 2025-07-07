@@ -472,7 +472,7 @@ public partial class MainWindow : Window
 
         try
         {
-            var result = await _bruteForceTSP.SolveTSP(_graph.GetGraphNodes());
+            var result = await _bruteForceTSP.SolveTSP(_graph.GetGraphNodes(), _animationDelay);
 
             if (result.path.Count > 0)
             {
@@ -483,12 +483,7 @@ public partial class MainWindow : Window
                 UpdateOutput($"TSP Brute Force Results:\n\nBest path: {pathStr}\nTotal distance: {result.distance}\nNodes visited: {result.path.Count}\n\nComplexity: O(n!)");
                 UpdateStatus($"TSP completed - Distance: {result.distance}");
 
-                // Highlight the best path
-                _graph.ResetNodeVisualStates();
-                foreach (var node in result.path)
-                {
-                    node.DrawGreenHighlightedNode();
-                }
+                // The algorithm handles its own highlighting during execution
             }
             else
             {
@@ -519,7 +514,7 @@ public partial class MainWindow : Window
             var startNode = _sourceNode ?? _graph.GetGraphNodes().FirstOrDefault();
             if (startNode == null) return;
 
-            var result = await _nearestNeighbours.SolveTSP(_graph.GetGraphNodes(), startNode);
+            var result = await _nearestNeighbours.SolveTSP(_graph.GetGraphNodes(), startNode, _animationDelay);
 
             if (result.path.Count > 0)
             {
@@ -528,12 +523,7 @@ public partial class MainWindow : Window
                 UpdateOutput($"TSP Nearest Neighbour Results:\n\nPath: {pathStr}\nTotal distance: {result.distance}\nNodes visited: {result.path.Count}\n\nComplexity: O(n²)");
                 UpdateStatus($"TSP completed - Distance: {result.distance}");
 
-                // Highlight the path
-                _graph.ResetNodeVisualStates();
-                foreach (var node in result.path)
-                {
-                    node.DrawOrangeHighlightedNode();
-                }
+                // The algorithm handles its own highlighting during execution
             }
             else
             {

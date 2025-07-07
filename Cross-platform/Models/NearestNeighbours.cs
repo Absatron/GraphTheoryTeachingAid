@@ -17,67 +17,122 @@ namespace TeachingAidMac.Models
         {
         }
 
-        public async Task<(List<Node> path, int distance)> SolveTSP(List<Node> nodes, Node startNode)
+        public async Task<(List<Node> path, int distance)> SolveTSP(List<Node> nodes, Node startNode, int animationDelay = 500)
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
                 _bestPath.Clear();
-                _bestDistance = 0;
+                _bestDistance = int.MaxValue;
 
                 if (nodes.Count == 0)
                     return (new List<Node>(), 0);
 
-                var unvisitedNodes = new List<Node>(nodes);
-                var currentPath = new List<Node> { startNode };
-                unvisitedNodes.Remove(startNode);
-
-                var currentNode = startNode;
-                var totalDistance = 0;
-
-                // Nearest neighbor algorithm
-                while (unvisitedNodes.Count > 0)
+                // Try starting from each node to find the best path
+                foreach (var tryStartNode in nodes)
                 {
-                    Node? nearestNode = null;
-                    int nearestDistance = int.MaxValue;
-
-                    // Find the nearest unvisited node
-                    foreach (var node in unvisitedNodes)
+                    // Reset graph visualization
+                    foreach (var node in nodes)
                     {
-                        var connection = currentNode.GetConnectionTo(node);
-                        if (connection != null && connection.Weight < nearestDistance)
+                        node.DrawNormalNode();
+                        foreach (var connection in node.GetConnections())
                         {
-                            nearestDistance = connection.Weight;
-                            nearestNode = node;
+                            connection.DrawLine();
                         }
                     }
 
-                    if (nearestNode != null)
+                    var currentPath = await FindPathWithVisualization(tryStartNode, nodes, animationDelay);
+                    var distance = CalculatePathDistance(currentPath);
+
+                    if (distance < _bestDistance && distance > 0)
                     {
-                        currentPath.Add(nearestNode);
-                        unvisitedNodes.Remove(nearestNode);
-                        totalDistance += nearestDistance;
-                        currentNode = nearestNode;
+                        _bestDistance = distance;
+                        _bestPath = new List<Node>(currentPath);
+                        await HighlightBestPath(_bestPath, tryStartNode, animationDelay);
+                        _bestPath.Add(tryStartNode); // Complete the cycle
                     }
-                    else
+                    else if (currentPath.Count > 0)
                     {
-                        // No connection found, algorithm fails
-                        break;
+                        await HighlightPathFound(currentPath, tryStartNode, animationDelay);
                     }
                 }
 
-                // Return to start node
-                var returnConnection = currentNode.GetConnectionTo(startNode);
-                if (returnConnection != null)
-                {
-                    currentPath.Add(startNode);
-                    totalDistance += returnConnection.Weight;
-                }
-
-                _bestPath = currentPath;
-                _bestDistance = totalDistance;
-
-                return (_bestPath, _bestDistance);
+                return (_bestPath, _bestDistance == int.MaxValue ? 0 : _bestDistance);
             });
+        }
+
+        private async Task<List<Node>> FindPathWithVisualization(Node startNode, List<Node> allNodes, int animationDelay)
+        {
+            var unvisitedNodes = new List<Node>(allNodes);
+            var currentPath = new List<Node> { startNode };
+            unvisitedNodes.Remove(startNode);
+
+            var currentNode = startNode;
+
+            // Highlight starting node
+            startNode.DrawRedHighlightedNode();
+            await Task.Delay(animationDelay / 5);
+
+            while (unvisitedNodes.Count > 0)
+            {
+                Node? nearestNode = null;
+                int nearestDistance = int.MaxValue;
+                Connection? nearestConnection = null;
+
+                // Find the nearest unvisited node with visualization
+                foreach (var node in unvisitedNodes)
+                {
+                    var connection = currentNode.GetConnectionTo(node);
+                    if (connection != null)
+                    {
+                        // Highlight connection being explored
+                        connection.DrawRedHighlightedLine();
+                        node.DrawRedHighlightedNode();
+                        await Task.Delay(animationDelay / 5); // Animation delay
+
+                        // Reset highlighting
+                        connection.DrawLine();
+                        node.DrawNormalNode();
+
+                        if (connection.Weight < nearestDistance)
+                        {
+                            nearestDistance = connection.Weight;
+                            nearestNode = node;
+                            nearestConnection = connection;
+                        }
+                    }
+                }
+
+                if (nearestNode != null && nearestConnection != null)
+                {
+                    // Move to the nearest node
+                    currentPath.Add(nearestNode);
+                    unvisitedNodes.Remove(nearestNode);
+                    currentNode = nearestNode;
+
+                    // Highlight the chosen path
+                    currentNode.DrawRedHighlightedNode();
+                    nearestConnection.DrawRedHighlightedLine();
+                    await Task.Delay(animationDelay / 5);
+                }
+                else
+                {
+                    // No connection found, algorithm fails
+                    break;
+                }
+
+                // Check if we need to return to start for complete cycle
+                if (unvisitedNodes.Count == 0)
+                {
+                    var returnConnection = currentNode.GetConnectionTo(startNode);
+                    if (returnConnection != null)
+                    {
+                        returnConnection.DrawRedHighlightedLine();
+                        await Task.Delay(animationDelay / 5);
+                    }
+                }
+            }
+
+            return currentPath;
         }
 
         public string FindBestPath(Graph graph)
@@ -245,6 +300,46 @@ namespace TeachingAidMac.Models
 
             // Trigger redraw to show highlighted connections
             _currentGraph?.TriggerRedraw();
+        }
+
+        private async Task HighlightBestPath(List<Node> path, Node startNode, int animationDelay)
+        {
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                path[i].DrawGreenHighlightedNode();
+                var connection = path[i].GetConnectionTo(path[i + 1]);
+                connection?.DrawGreenHighlightedLine();
+            }
+
+            if (path.Count > 0)
+            {
+                path[path.Count - 1].DrawGreenHighlightedNode();
+                // Highlight return to start
+                var returnConnection = path[path.Count - 1].GetConnectionTo(startNode);
+                returnConnection?.DrawGreenHighlightedLine();
+            }
+
+            await Task.Delay(animationDelay / 2); // Similar to VB.NET threading delay
+        }
+
+        private async Task HighlightPathFound(List<Node> path, Node startNode, int animationDelay)
+        {
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                path[i].DrawOrangeHighlightedNode();
+                var connection = path[i].GetConnectionTo(path[i + 1]);
+                connection?.DrawOrangeHighlightedLine();
+            }
+
+            if (path.Count > 0)
+            {
+                path[path.Count - 1].DrawOrangeHighlightedNode();
+                // Highlight return to start
+                var returnConnection = path[path.Count - 1].GetConnectionTo(startNode);
+                returnConnection?.DrawOrangeHighlightedLine();
+            }
+
+            await Task.Delay(animationDelay / 2); // Similar to VB.NET threading delay
         }
     }
 }

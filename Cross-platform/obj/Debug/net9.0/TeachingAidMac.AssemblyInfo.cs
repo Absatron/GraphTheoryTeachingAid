@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TeachingAidMac")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f04fc59e08f5855294c3eaeb85f37af5258b3b5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0bbbd08e030f45440c3bd6afda4a19a2c5fbd9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TeachingAidMac")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TeachingAidMac")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

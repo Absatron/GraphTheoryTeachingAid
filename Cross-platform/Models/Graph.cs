@@ -274,6 +274,8 @@ namespace TeachingAidMac.Models
                 {
                     connection.RemoveLine();
                 }
+                // Clear the connections list for each node
+                node.GetConnections().Clear();
             }
 
             // Remove all nodes from canvas
@@ -286,6 +288,9 @@ namespace TeachingAidMac.Models
             }
 
             _nodes.Clear();
+
+            // Trigger redraw to ensure clean canvas
+            TriggerRedraw();
         }
 
         public void UpdateAddedConnection(Node sourceNode, Node targetNode)
