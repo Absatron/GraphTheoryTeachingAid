@@ -1,0 +1,111 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TeachingAidMac.ViewModels"
+        xmlns:controls="using:TeachingAidMac.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dataGrid="using:Avalonia.Controls"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="TeachingAidMac.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Graph Theory Teaching Aid">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+          <!-- Toolbar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <Button Name="AddNodeButton" Content="Add Node" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="RemoveNodeButton" Content="Remove Node" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="LoadGraphButton" Content="Load Sample Graph" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="ClearGraphButton" Content="Clear Graph" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="SwitchModeButton" Content="Switch Mode" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="FullyConnectButton" Content="Fully Connect" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="SaveGraphButton" Content="Save Graph" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="LoadFileButton" Content="Load Graph" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+        </StackPanel>
+          <!-- Algorithm Controls -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+            <Button Name="TSPButton" Content="TSP Brute Force" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="NearestNeighbourButton" Content="TSP Nearest Neighbour" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="BFSButton" Content="BFS" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="DFSButton" Content="DFS" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>            <Button Name="DijkstraButton" Content="Dijkstra" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            <Button Name="ResetButton" Content="Reset Nodes" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+        </StackPanel>
+        
+        <!-- Path Selection and Speed Control -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Source:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                <ComboBox Name="SourceNodeCombo" Width="80" Margin="0,0,10,0"/>
+                <TextBlock Text="Target:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                <ComboBox Name="TargetNodeCombo" Width="80" Margin="0,0,10,0"/>
+                <Button Name="SetSourceButton" Content="Set Source" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+                <Button Name="SetTargetButton" Content="Set Target" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+                <Button Name="FindPathButton" Content="Find Shortest Path" Margin="5" Background="Black" Foreground="LightBlue" BorderBrush="LightBlue"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Animation Speed:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                <Slider Name="SpeedSlider" Width="200" Minimum="100" Maximum="2000" Value="500" Margin="0,0,10,0"/>
+                <TextBlock Name="SpeedLabel" Text="500ms" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBlock Text="Mode:" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                <TextBlock Name="ModeLabel" Text="Manual" VerticalAlignment="Center" Margin="5,0"/>
+            </StackPanel>
+        </Grid>        <!-- Main Content -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Graph Canvas -->
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                <controls:GraphCanvas Name="GraphCanvas" Background="White"/>
+            </Border>
+
+            <!-- Information Panel -->
+            <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Algorithm Output" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <ScrollViewer Height="200">
+                        <TextBlock Name="AlgorithmOutput" TextWrapping="Wrap" Background="LightGray" Padding="5"/>
+                    </ScrollViewer>
+                    
+                    <TextBlock Text="Graph Statistics" FontWeight="Bold" FontSize="16" Margin="0,20,0,10"/>
+                    <StackPanel Name="StatsPanel">
+                        <TextBlock Name="NodeCountText" Text="Nodes: 0"/>
+                        <TextBlock Name="ConnectionCountText" Text="Connections: 0"/>
+                        <TextBlock Name="ShortestPathText" Text="Last Path Length: -"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Adjacency Matrix" FontWeight="Bold" FontSize="16" Margin="0,20,0,10"/>                    <ScrollViewer Height="150">
+                        <DataGrid Name="AdjacencyMatrix" IsReadOnly="True" CanUserResizeColumns="False" 
+                                  GridLinesVisibility="All" Background="LightBlue" HeadersVisibility="All"/>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="4" Background="LightGray" Height="25">
+            <TextBlock Name="StatusText" Text="Ready" VerticalAlignment="Center" Margin="5,0"/>
+        </Border>
+    </Grid>
+
+</Window>

@@ -117,6 +117,8 @@ This tool is ideal for:
 - **UI Framework**: Windows Forms
 - **File I/O**: XML serialization for data persistence
 
+> **Note**: A cross-platform version of this project has been roughly converted to C# using Avalonia UI framework and can be found in the `Cross-platform/` directory. This version allows the application to run on macOS, Linux, and Windows.
+
 ## Algorithm Complexity Demonstrations
 
 - **BFS/DFS**: O(V + E) time complexity visualization
